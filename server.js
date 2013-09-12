@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 var util = require('util'),
     http = require('http'),
@@ -240,88 +239,6 @@ StaticServlet.prototype.writeDirectoryIndex_ = function(req, res, path, files) {
   res.write('</ol>');
   res.end();
 };
-
-var express = require('express');
-var app = express();
-
-
-
-
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-}
-
-app.configure(function() {
-    app.use(allowCrossDomain);
-});
-
-
-// rest method for getting areas
-app.get('/movies/getareas', function (req, res) {
-      
-    client = new Client();
-    client.get('http://www.finnkino.fi/xml/TheatreAreas/', function(data, response){
-        var parser = new xml2js.Parser({explicitArray:false});
-        parser.parseString(data, function(err, result) {
-            res.json(result);
-        });
-    });
-    
-});
-
-
-
-
-// rest method for getting schedule dates
-app.get('/movies/getscheduledates/:area', function (req, res) {
- 
-    client = new Client();
-    client.get('http://www.finnkino.fi/xml/ScheduleDates/?area=' + req.params.area, function(data, response){
-        var parser = new xml2js.Parser({explicitArray:false});
-        parser.parseString(data, function(err, result) {
-            res.json(result);
-        });
-    });
-});
-
-// rest method for getting movies
-app.get('/movies/getschedule/:area/:date', function (req, res) {
- 
-    client = new Client();
-    client.get('http://www.finnkino.fi/xml/Schedule/?area=' + req.params.area + '&dt=' + req.params.date, function(data, response){
-        var parser = new xml2js.Parser({explicitArray:false});
-        parser.parseString(data, function(err, result) {
-            res.json(result);
-        });
-    });
-});
-
-// rest method for getting movie information
-app.get('/movies/getschedule/:area/:date/:id', function (req, res) {
- 
-    client = new Client();
-    client.get('http://www.finnkino.fi/xml/Schedule/?area=' + req.params.area + '&dt=' + req.params.date + '&eventID=' + req.params.id, function(data, response){
-        var parser = new xml2js.Parser({explicitArray:false});
-        parser.parseString(data, function(err, result) {
-            res.json(result);
-        });
-    });
-});
-
-
-
-
-var Client = require('node-rest-client').Client;
-
-var fs = require('fs');
-xml2js = require('xml2js');
-
-
-app.listen(process.env.PORT || 4730);
-
 
 
 
